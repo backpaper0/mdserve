@@ -59,7 +59,7 @@ func (h *markdownHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Write(html) //nolint:errcheck
+	_, _ = w.Write(html)
 }
 
 // breadcrumbsForURL builds a breadcrumb trail for the parent directories of urlPath.
@@ -130,7 +130,9 @@ func (h *directoryHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if listing.IndexFile != "" {
+	forceList := r.URL.Query().Has("list")
+
+	if listing.IndexFile != "" && !forceList {
 		h.serveIndexFile(w, r, listing)
 		return
 	}
@@ -150,6 +152,7 @@ func (h *directoryHandler) serveIndexFile(w http.ResponseWriter, r *http.Request
 		Content:     template.HTML(content), //nolint:gosec // trusted renderer output
 		Breadcrumbs: listing.Breadcrumbs,
 		LiveReload:  h.liveReload,
+		DirListURL:  r.URL.Path + "?list",
 	}
 
 	html, err := h.tmplEngine.RenderPage(data)
@@ -159,15 +162,21 @@ func (h *directoryHandler) serveIndexFile(w http.ResponseWriter, r *http.Request
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Write(html) //nolint:errcheck
+	_, _ = w.Write(html)
 }
 
 func (h *directoryHandler) serveDirList(w http.ResponseWriter, r *http.Request, listing *dirlist.Listing) {
+	indexURL := ""
+	if listing.IndexFile != "" {
+		indexURL = r.URL.Path
+	}
+
 	data := tmpl.DirListData{
 		Title:       listing.Title,
 		Breadcrumbs: listing.Breadcrumbs,
 		Entries:     listing.Entries,
 		LiveReload:  h.liveReload,
+		IndexURL:    indexURL,
 	}
 
 	html, err := h.tmplEngine.RenderDirList(data)
@@ -177,7 +186,7 @@ func (h *directoryHandler) serveDirList(w http.ResponseWriter, r *http.Request, 
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Write(html) //nolint:errcheck
+	_, _ = w.Write(html)
 }
 
 // --- StaticFileHandler ---

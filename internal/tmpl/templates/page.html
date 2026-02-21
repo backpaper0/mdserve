@@ -19,6 +19,11 @@ nav.breadcrumb a:hover { text-decoration: underline; }
 {{range .Breadcrumbs}}<a href="{{.URL}}">{{.Label}}</a> / {{end}}
 </nav>
 {{end}}
+{{if .DirListURL}}
+<div class="dir-list-link">
+  <a href="{{.DirListURL}}">ファイル一覧を表示</a>
+</div>
+{{end}}
 <article class="markdown-body">
 {{.Content}}
 </article>

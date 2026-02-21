@@ -16,6 +16,7 @@ type PageData struct {
 	Content     template.HTML // Trusted HTML fragment from Renderer; not escaped again
 	Breadcrumbs []dirlist.Breadcrumb
 	LiveReload  bool
+	DirListURL  string // Non-empty: show link to directory listing page; empty: hide link
 }
 
 // DirListData holds the data needed to render a directory listing page.
@@ -24,6 +25,7 @@ type DirListData struct {
 	Breadcrumbs []dirlist.Breadcrumb
 	Entries     []dirlist.Entry
 	LiveReload  bool
+	IndexURL    string // Non-empty: show link to README/index page; empty: hide link
 }
 
 // TemplateEngine renders full HTML pages from structured data.

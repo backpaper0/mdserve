@@ -18,6 +18,11 @@ nav.breadcrumb a:hover { text-decoration: underline; }
 {{range .Breadcrumbs}}<a href="{{.URL}}">{{.Label}}</a> / {{end}}
 </nav>
 {{end}}
+{{if .IndexURL}}
+<div class="dir-list-link">
+  <a href="{{.IndexURL}}">README を表示</a>
+</div>
+{{end}}
 <article class="markdown-body">
 <h1>{{.Title}}</h1>
 <ul>
