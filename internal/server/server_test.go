@@ -18,7 +18,7 @@ func freePort(t *testing.T) int {
 		t.Fatalf("freePort: %v", err)
 	}
 	port := l.Addr().(*net.TCPAddr).Port
-	l.Close()
+	_ = l.Close()
 	return port
 }
 
@@ -29,7 +29,7 @@ func waitForServer(t *testing.T, port int) {
 	for time.Now().Before(deadline) {
 		resp, err := http.Get(fmt.Sprintf("http://localhost:%d/", port))
 		if err == nil {
-			resp.Body.Close()
+			_ = resp.Body.Close()
 			return
 		}
 		time.Sleep(10 * time.Millisecond)
@@ -95,8 +95,8 @@ func TestServer_RespondsToHTTPRequests(t *testing.T) {
 	cfg := server.Config{DocRoot: t.TempDir(), Port: port}
 	s := server.New(cfg)
 
-	go s.Start()
-	t.Cleanup(func() { s.Shutdown() })
+	go func() { _ = s.Start() }()
+	t.Cleanup(func() { _ = s.Shutdown() })
 
 	waitForServer(t, port)
 
@@ -104,7 +104,7 @@ func TestServer_RespondsToHTTPRequests(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode == 0 {
 		t.Error("expected valid HTTP status code")

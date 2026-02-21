@@ -55,7 +55,7 @@ func TestRouter_MDFileRoutedToMarkdownHandler(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /hello.md: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		t.Errorf("expected 200, got %d", resp.StatusCode)
@@ -74,7 +74,7 @@ func TestRouter_DirectoryRoutedToDirHandler(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		t.Errorf("expected 200 for root directory, got %d", resp.StatusCode)
@@ -93,7 +93,7 @@ func TestRouter_NonExistentPathReturns404(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /nonexistent.md: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusNotFound {
 		t.Errorf("expected 404, got %d", resp.StatusCode)
@@ -110,7 +110,7 @@ func TestRouter_PathTraversalBlocked(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET path traversal: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode == http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
@@ -127,7 +127,7 @@ func TestRouter_StaticFileServed(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /image.png: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		t.Errorf("expected 200 for static file, got %d", resp.StatusCode)
@@ -145,7 +145,7 @@ func TestMarkdownHandler_RendersHTMLContent(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /doc.md: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	body, _ := io.ReadAll(resp.Body)
 	html := string(body)
@@ -170,7 +170,7 @@ func TestMarkdownHandler_ContentTypeIsHTML(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /file.md: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	ct := resp.Header.Get("Content-Type")
 	if !strings.HasPrefix(ct, "text/html") {
@@ -187,7 +187,7 @@ func TestMarkdownHandler_ContainsAssetLinks(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /page.md: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	body, _ := io.ReadAll(resp.Body)
 	html := string(body)
@@ -206,7 +206,7 @@ func TestMarkdownHandler_SubdirMDFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /sub/page.md: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		t.Errorf("expected 200, got %d", resp.StatusCode)
@@ -227,7 +227,7 @@ func TestDirHandler_EmptyDirShowsListing(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		t.Errorf("expected 200 for empty dir listing, got %d", resp.StatusCode)
@@ -247,7 +247,7 @@ func TestDirHandler_WithREADMERendersMarkdown(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	body, _ := io.ReadAll(resp.Body)
 	html := string(body)
@@ -269,7 +269,7 @@ func TestDirHandler_WithIndexMDRendersMarkdown(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	body, _ := io.ReadAll(resp.Body)
 	if !strings.Contains(string(body), "Index Page") {
@@ -287,7 +287,7 @@ func TestDirHandler_ListingContainsMDLinks(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	body, _ := io.ReadAll(resp.Body)
 	html := string(body)
@@ -310,7 +310,7 @@ func TestDirHandler_ListingExcludesNonMDFiles(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	body, _ := io.ReadAll(resp.Body)
 	html := string(body)
@@ -333,7 +333,7 @@ func TestDirHandler_SubdirectoryRequest(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /docs/: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		t.Errorf("expected 200, got %d", resp.StatusCode)
@@ -355,7 +355,7 @@ func TestStaticHandler_ServesNonMDFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /style.css: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		t.Errorf("expected 200, got %d", resp.StatusCode)
@@ -375,7 +375,7 @@ func TestStaticHandler_ServesImageFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /logo.png: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		t.Errorf("expected 200, got %d", resp.StatusCode)
@@ -390,7 +390,7 @@ func TestStaticHandler_NotFoundForMissingFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /missing.pdf: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusNotFound {
 		t.Errorf("expected 404, got %d", resp.StatusCode)

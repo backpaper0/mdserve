@@ -57,7 +57,7 @@ func TestSSEHandler_SetsCorrectContentType(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /events: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	ct := resp.Header.Get("Content-Type")
 	if ct != "text/event-stream" {
@@ -76,7 +76,7 @@ func TestSSEHandler_NoCacheHeaders(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /events: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	cc := resp.Header.Get("Cache-Control")
 	if cc != "no-cache" {
@@ -95,7 +95,7 @@ func TestSSEHandler_SendsReloadEventOnBroadcast(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /events: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		t.Fatalf("expected 200, got %d", resp.StatusCode)
@@ -137,8 +137,8 @@ func TestServer_SSEEndpointAvailable(t *testing.T) {
 	cfg := server.Config{DocRoot: t.TempDir(), Port: port, NoWatch: false}
 	s := server.New(cfg)
 
-	go s.Start()
-	t.Cleanup(func() { s.Shutdown() })
+	go func() { _ = s.Start() }()
+	t.Cleanup(func() { _ = s.Shutdown() })
 
 	waitForServer(t, port)
 
@@ -146,7 +146,7 @@ func TestServer_SSEEndpointAvailable(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /events: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		t.Errorf("expected 200 from /events, got %d", resp.StatusCode)
@@ -163,8 +163,8 @@ func TestServer_SSEEndpointAvailableInNoWatchMode(t *testing.T) {
 	cfg := server.Config{DocRoot: t.TempDir(), Port: port, NoWatch: true}
 	s := server.New(cfg)
 
-	go s.Start()
-	t.Cleanup(func() { s.Shutdown() })
+	go func() { _ = s.Start() }()
+	t.Cleanup(func() { _ = s.Shutdown() })
 
 	waitForServer(t, port)
 
@@ -172,7 +172,7 @@ func TestServer_SSEEndpointAvailableInNoWatchMode(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /events: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		t.Errorf("expected 200 from /events even in no-watch mode, got %d", resp.StatusCode)

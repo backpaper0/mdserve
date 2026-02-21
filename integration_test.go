@@ -24,7 +24,7 @@ func freePort(t *testing.T) int {
 		t.Fatalf("freePort: %v", err)
 	}
 	port := l.Addr().(*net.TCPAddr).Port
-	l.Close()
+	_ = l.Close()
 	return port
 }
 
@@ -35,7 +35,7 @@ func waitForServer(t *testing.T, port int) {
 	for time.Now().Before(deadline) {
 		resp, err := http.Get(fmt.Sprintf("http://localhost:%d/", port))
 		if err == nil {
-			resp.Body.Close()
+			_ = resp.Body.Close()
 			return
 		}
 		time.Sleep(10 * time.Millisecond)
@@ -57,8 +57,8 @@ func TestE2E_EmbeddedAssetsServed(t *testing.T) {
 	}
 	s := server.New(cfg)
 
-	go s.Start()
-	t.Cleanup(func() { s.Shutdown() })
+	go func() { _ = s.Start() }()
+	t.Cleanup(func() { _ = s.Shutdown() })
 
 	waitForServer(t, port)
 
@@ -73,7 +73,7 @@ func TestE2E_EmbeddedAssetsServed(t *testing.T) {
 			if err != nil {
 				t.Fatalf("GET %s: %v", p, err)
 			}
-			resp.Body.Close()
+			_ = resp.Body.Close()
 
 			if resp.StatusCode != http.StatusOK {
 				t.Errorf("GET %s: expected 200, got %d", p, resp.StatusCode)
@@ -98,8 +98,8 @@ func TestE2E_MDFileReturns200HTML(t *testing.T) {
 	}
 	s := server.New(cfg)
 
-	go s.Start()
-	t.Cleanup(func() { s.Shutdown() })
+	go func() { _ = s.Start() }()
+	t.Cleanup(func() { _ = s.Shutdown() })
 
 	waitForServer(t, port)
 
@@ -107,7 +107,7 @@ func TestE2E_MDFileReturns200HTML(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /hello.md: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		t.Errorf("expected 200, got %d", resp.StatusCode)
@@ -129,8 +129,8 @@ func TestE2E_NonExistentPathReturns404(t *testing.T) {
 	}
 	s := server.New(cfg)
 
-	go s.Start()
-	t.Cleanup(func() { s.Shutdown() })
+	go func() { _ = s.Start() }()
+	t.Cleanup(func() { _ = s.Shutdown() })
 
 	waitForServer(t, port)
 
@@ -138,7 +138,7 @@ func TestE2E_NonExistentPathReturns404(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /notfound.md: %v", err)
 	}
-	resp.Body.Close()
+	_ = resp.Body.Close()
 
 	if resp.StatusCode != http.StatusNotFound {
 		t.Errorf("expected 404, got %d", resp.StatusCode)
@@ -158,8 +158,8 @@ func TestE2E_IndexFilePriority(t *testing.T) {
 		cfg := server.Config{DocRoot: docRoot, Port: port, NoWatch: true}
 		s := server.New(cfg)
 
-		go s.Start()
-		t.Cleanup(func() { s.Shutdown() })
+		go func() { _ = s.Start() }()
+		t.Cleanup(func() { _ = s.Shutdown() })
 
 		waitForServer(t, port)
 
@@ -167,7 +167,7 @@ func TestE2E_IndexFilePriority(t *testing.T) {
 		if err != nil {
 			t.Fatalf("GET /: %v", err)
 		}
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		buf := make([]byte, 4096)
 		n, _ := resp.Body.Read(buf)
@@ -186,8 +186,8 @@ func TestE2E_IndexFilePriority(t *testing.T) {
 		cfg := server.Config{DocRoot: docRoot, Port: port, NoWatch: true}
 		s := server.New(cfg)
 
-		go s.Start()
-		t.Cleanup(func() { s.Shutdown() })
+		go func() { _ = s.Start() }()
+		t.Cleanup(func() { _ = s.Shutdown() })
 
 		waitForServer(t, port)
 
@@ -195,7 +195,7 @@ func TestE2E_IndexFilePriority(t *testing.T) {
 		if err != nil {
 			t.Fatalf("GET /: %v", err)
 		}
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		buf := make([]byte, 4096)
 		n, _ := resp.Body.Read(buf)
@@ -215,8 +215,8 @@ func TestE2E_PathTraversalBlocked(t *testing.T) {
 	}
 	s := server.New(cfg)
 
-	go s.Start()
-	t.Cleanup(func() { s.Shutdown() })
+	go func() { _ = s.Start() }()
+	t.Cleanup(func() { _ = s.Shutdown() })
 
 	waitForServer(t, port)
 
@@ -224,7 +224,7 @@ func TestE2E_PathTraversalBlocked(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET path traversal: %v", err)
 	}
-	resp.Body.Close()
+	_ = resp.Body.Close()
 
 	if resp.StatusCode == http.StatusOK {
 		t.Error("path traversal should not return 200")
@@ -250,8 +250,8 @@ func TestSSELiveReload_FileChangeTriggersReload(t *testing.T) {
 	}
 	s := server.New(cfg)
 
-	go s.Start()
-	t.Cleanup(func() { s.Shutdown() })
+	go func() { _ = s.Start() }()
+	t.Cleanup(func() { _ = s.Shutdown() })
 
 	waitForServer(t, port)
 
@@ -260,7 +260,7 @@ func TestSSELiveReload_FileChangeTriggersReload(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /events: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		t.Fatalf("/events: expected 200, got %d", resp.StatusCode)
@@ -315,8 +315,8 @@ func TestSSELiveReload_NoWatchModeNoSSEEvent(t *testing.T) {
 	}
 	s := server.New(cfg)
 
-	go s.Start()
-	t.Cleanup(func() { s.Shutdown() })
+	go func() { _ = s.Start() }()
+	t.Cleanup(func() { _ = s.Shutdown() })
 
 	waitForServer(t, port)
 
@@ -325,7 +325,7 @@ func TestSSELiveReload_NoWatchModeNoSSEEvent(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET /events: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	// バックグラウンドで SSE イベントを監視する
 	reloadReceived := make(chan struct{}, 1)

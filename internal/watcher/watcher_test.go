@@ -16,7 +16,7 @@ func TestWatcher_WatchStartsWithoutError(t *testing.T) {
 	docRoot := t.TempDir()
 	broker := sse.New()
 	w := watcher.New(broker)
-	defer w.Close()
+	defer func() { _ = w.Close() }()
 
 	if err := w.Watch(docRoot); err != nil {
 		t.Fatalf("Watch() error: %v", err)
@@ -31,7 +31,7 @@ func TestWatcher_BroadcastsOnFileWrite(t *testing.T) {
 	broker := &recordingBroker{ch: recorded}
 
 	w := watcher.New(broker)
-	defer w.Close()
+	defer func() { _ = w.Close() }()
 
 	if err := w.Watch(docRoot); err != nil {
 		t.Fatalf("Watch() error: %v", err)
@@ -65,7 +65,7 @@ func TestWatcher_BroadcastsOnFileRemove(t *testing.T) {
 	broker := &recordingBroker{ch: recorded}
 
 	w := watcher.New(broker)
-	defer w.Close()
+	defer func() { _ = w.Close() }()
 
 	if err := w.Watch(docRoot); err != nil {
 		t.Fatalf("Watch() error: %v", err)
@@ -100,7 +100,7 @@ func TestWatcher_BroadcastsOnFileRename(t *testing.T) {
 	broker := &recordingBroker{ch: recorded}
 
 	w := watcher.New(broker)
-	defer w.Close()
+	defer func() { _ = w.Close() }()
 
 	if err := w.Watch(docRoot); err != nil {
 		t.Fatalf("Watch() error: %v", err)
@@ -133,7 +133,7 @@ func TestWatcher_WatchesSubdirRecursively(t *testing.T) {
 	broker := &recordingBroker{ch: recorded}
 
 	w := watcher.New(broker)
-	defer w.Close()
+	defer func() { _ = w.Close() }()
 
 	if err := w.Watch(docRoot); err != nil {
 		t.Fatalf("Watch() error: %v", err)
@@ -160,7 +160,7 @@ func TestWatcher_DynamicallyWatchesNewSubdir(t *testing.T) {
 	broker := &recordingBroker{ch: recorded}
 
 	w := watcher.New(broker)
-	defer w.Close()
+	defer func() { _ = w.Close() }()
 
 	if err := w.Watch(docRoot); err != nil {
 		t.Fatalf("Watch() error: %v", err)

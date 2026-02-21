@@ -46,7 +46,7 @@ func (w *fsWatcher) Watch(docRoot string) error {
 		}
 		return nil
 	}); err != nil {
-		fw.Close()
+		_ = fw.Close()
 		return err
 	}
 
