@@ -16,3 +16,6 @@ coverage.txt
 # OS
 .DS_Store
 Thumbs.db
+
+# ローカル設定ファイル
+*.local.*
