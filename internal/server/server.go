@@ -112,7 +112,7 @@ func (s *Server) Start() error {
 // active connections to complete.
 func (s *Server) Shutdown() error {
 	if s.watcher != nil {
-		s.watcher.Close() //nolint:errcheck
+		_ = s.watcher.Close()
 	}
 	if s.httpSrv == nil {
 		return nil
