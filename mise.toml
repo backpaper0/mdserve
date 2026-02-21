@@ -1,2 +1,19 @@
 [tools]
 go = "1.24.13"
+golangci-lint = "latest"
+
+[tasks.test]
+run = "go test ./..."
+description = "Run tests"
+
+[tasks.lint]
+run = "golangci-lint run ./..."
+description = "Run linter"
+
+[tasks.build]
+run = "go build -o bin/mdserve ./cmd/mdserve"
+description = "Build binary"
+
+[tasks.check]
+depends = ["lint", "test"]
+description = "Run lint and tests"
