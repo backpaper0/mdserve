@@ -75,8 +75,8 @@ go mod download
 ### ビルド手順
 
 ```bash
-# ビルド（カレントディレクトリに mdserve バイナリを生成）
-go build -o mdserve ./cmd/mdserve/
+# ビルド（bin/mdserve バイナリを生成）
+mise run build
 
 # パスの通った場所にインストール
 go install ./cmd/mdserve/
@@ -86,19 +86,26 @@ go install ./cmd/mdserve/
 
 ```bash
 # Linux (amd64)
-GOOS=linux GOARCH=amd64 go build -o mdserve-linux-amd64 ./cmd/mdserve/
+GOOS=linux GOARCH=amd64 go build -o bin/mdserve-linux-amd64 ./cmd/mdserve/
 
 # macOS (arm64)
-GOOS=darwin GOARCH=arm64 go build -o mdserve-darwin-arm64 ./cmd/mdserve/
+GOOS=darwin GOARCH=arm64 go build -o bin/mdserve-darwin-arm64 ./cmd/mdserve/
 
 # Windows (amd64)
-GOOS=windows GOARCH=amd64 go build -o mdserve-windows-amd64.exe ./cmd/mdserve/
+GOOS=windows GOARCH=amd64 go build -o bin/mdserve-windows-amd64.exe ./cmd/mdserve/
 ```
 
-### テスト
+### テストとリント
 
 ```bash
-go test ./...
+# テスト
+mise run test
+
+# リント
+mise run lint
+
+# リントとテストをまとめて実行
+mise run check
 ```
 
 ## ライセンス
