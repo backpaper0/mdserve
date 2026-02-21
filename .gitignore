@@ -1,6 +1,7 @@
 # ビルド成果物
 /mdserve
 /mdserve-*
+/bin/
 
 # Go
 *.test
