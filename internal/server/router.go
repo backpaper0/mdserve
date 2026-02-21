@@ -40,8 +40,12 @@ func NewRequestRouter(
 	dirHandler http.Handler,
 	staticHandler http.Handler,
 ) http.Handler {
+	cleanRoot := filepath.Clean(docRoot)
+	if resolved, err := filepath.EvalSymlinks(cleanRoot); err == nil {
+		cleanRoot = resolved
+	}
 	return &requestRouter{
-		docRoot:       filepath.Clean(docRoot),
+		docRoot:       cleanRoot,
 		mdHandler:     mdHandler,
 		dirHandler:    dirHandler,
 		staticHandler: staticHandler,

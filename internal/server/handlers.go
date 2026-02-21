@@ -104,11 +104,15 @@ func NewDirectoryHandler(
 	docRoot string,
 	liveReload bool,
 ) http.Handler {
+	cleanRoot := filepath.Clean(docRoot)
+	if resolved, err := filepath.EvalSymlinks(cleanRoot); err == nil {
+		cleanRoot = resolved
+	}
 	return &directoryHandler{
 		lister:     lister,
 		renderer:   r,
 		tmplEngine: t,
-		docRoot:    filepath.Clean(docRoot),
+		docRoot:    cleanRoot,
 		liveReload: liveReload,
 	}
 }
