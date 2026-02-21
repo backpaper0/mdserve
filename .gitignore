@@ -1,0 +1,18 @@
+# ビルド成果物
+/mdserve
+/mdserve-*
+
+# Go
+*.test
+*.out
+coverage.txt
+
+# エディタ
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
