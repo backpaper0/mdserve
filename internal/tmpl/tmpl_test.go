@@ -294,3 +294,85 @@ func TestRenderDirList_Breadcrumbs(t *testing.T) {
 		t.Errorf("expected parent breadcrumb, got:\n%s", html)
 	}
 }
+
+// --- Task 1 + 3: ナビゲーションリンク (DirListURL / IndexURL) ---
+
+func TestRenderPage_DirListURL_ShowsLink(t *testing.T) {
+	engine := tmpl.New()
+	data := tmpl.PageData{
+		Title:      "Test",
+		Content:    template.HTML("<p>body</p>"),
+		DirListURL: "/subdir/?list",
+	}
+
+	got, err := engine.RenderPage(data)
+	if err != nil {
+		t.Fatalf("RenderPage error: %v", err)
+	}
+
+	html := string(got)
+	if !strings.Contains(html, "/subdir/?list") {
+		t.Errorf("expected DirListURL link in output, got:\n%s", html)
+	}
+	if !strings.Contains(html, "ファイル一覧を表示") {
+		t.Errorf("expected link text 'ファイル一覧を表示' in output, got:\n%s", html)
+	}
+}
+
+func TestRenderPage_DirListURL_Empty_HidesLink(t *testing.T) {
+	engine := tmpl.New()
+	data := tmpl.PageData{
+		Title:   "Test",
+		Content: template.HTML("<p>body</p>"),
+		// DirListURL is empty (zero value)
+	}
+
+	got, err := engine.RenderPage(data)
+	if err != nil {
+		t.Fatalf("RenderPage error: %v", err)
+	}
+
+	html := string(got)
+	if strings.Contains(html, "ファイル一覧を表示") {
+		t.Errorf("expected NO dir-list link when DirListURL is empty, got:\n%s", html)
+	}
+}
+
+func TestRenderDirList_IndexURL_ShowsLink(t *testing.T) {
+	engine := tmpl.New()
+	data := tmpl.DirListData{
+		Title:    "Test",
+		IndexURL: "/subdir/",
+	}
+
+	got, err := engine.RenderDirList(data)
+	if err != nil {
+		t.Fatalf("RenderDirList error: %v", err)
+	}
+
+	html := string(got)
+	if !strings.Contains(html, "/subdir/") {
+		t.Errorf("expected IndexURL link in output, got:\n%s", html)
+	}
+	if !strings.Contains(html, "README を表示") {
+		t.Errorf("expected link text 'README を表示' in output, got:\n%s", html)
+	}
+}
+
+func TestRenderDirList_IndexURL_Empty_HidesLink(t *testing.T) {
+	engine := tmpl.New()
+	data := tmpl.DirListData{
+		Title: "Test",
+		// IndexURL is empty (zero value)
+	}
+
+	got, err := engine.RenderDirList(data)
+	if err != nil {
+		t.Fatalf("RenderDirList error: %v", err)
+	}
+
+	html := string(got)
+	if strings.Contains(html, "README を表示") {
+		t.Errorf("expected NO readme link when IndexURL is empty, got:\n%s", html)
+	}
+}

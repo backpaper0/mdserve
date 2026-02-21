@@ -298,6 +298,145 @@ func TestSSELiveReload_FileChangeTriggersReload(t *testing.T) {
 	}
 }
 
+// --- directory-listing-with-readme 統合テスト ---
+
+// readBody はレスポンスボディを最大 64KB 読み込む。
+func readBody(t *testing.T, resp *http.Response) string {
+	t.Helper()
+	buf := make([]byte, 64*1024)
+	n, _ := resp.Body.Read(buf)
+	return string(buf[:n])
+}
+
+// TestE2E_DirWithReadme_ShowsDirListLink は README.md があるディレクトリへのリクエストで
+// ファイル一覧リンク（?list）が HTML に含まれることを検証する。
+func TestE2E_DirWithReadme_ShowsDirListLink(t *testing.T) {
+	docRoot := t.TempDir()
+	if err := os.WriteFile(filepath.Join(docRoot, "README.md"), []byte("# README\n"), 0o644); err != nil {
+		t.Fatalf("WriteFile: %v", err)
+	}
+
+	port := freePort(t)
+	cfg := server.Config{DocRoot: docRoot, Port: port, NoWatch: true}
+	s := server.New(cfg)
+	go func() { _ = s.Start() }()
+	t.Cleanup(func() { _ = s.Shutdown() })
+	waitForServer(t, port)
+
+	resp, err := http.Get(fmt.Sprintf("http://localhost:%d/", port))
+	if err != nil {
+		t.Fatalf("GET /: %v", err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	body := readBody(t, resp)
+	if !strings.Contains(body, "?list") {
+		t.Errorf("expected '?list' link in README page HTML, got:\n%s", body)
+	}
+	if !strings.Contains(body, "ファイル一覧を表示") {
+		t.Errorf("expected 'ファイル一覧を表示' link text in README page HTML, got:\n%s", body)
+	}
+}
+
+// TestE2E_DirWithReadme_ListParam_ShowsReadmeLink は ?list 付きリクエストで
+// ファイル一覧と README へのリンクが HTML に含まれることを検証する。
+func TestE2E_DirWithReadme_ListParam_ShowsReadmeLink(t *testing.T) {
+	docRoot := t.TempDir()
+	if err := os.WriteFile(filepath.Join(docRoot, "README.md"), []byte("# README\n"), 0o644); err != nil {
+		t.Fatalf("WriteFile: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(docRoot, "notes.md"), []byte("# Notes\n"), 0o644); err != nil {
+		t.Fatalf("WriteFile: %v", err)
+	}
+
+	port := freePort(t)
+	cfg := server.Config{DocRoot: docRoot, Port: port, NoWatch: true}
+	s := server.New(cfg)
+	go func() { _ = s.Start() }()
+	t.Cleanup(func() { _ = s.Shutdown() })
+	waitForServer(t, port)
+
+	resp, err := http.Get(fmt.Sprintf("http://localhost:%d/?list", port))
+	if err != nil {
+		t.Fatalf("GET /?list: %v", err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	body := readBody(t, resp)
+	if !strings.Contains(body, "README を表示") {
+		t.Errorf("expected 'README を表示' link in dir-list page, got:\n%s", body)
+	}
+	// README.md 自身もエントリに含まれることを確認
+	if !strings.Contains(body, "README.md") {
+		t.Errorf("expected README.md in dir-list entries, got:\n%s", body)
+	}
+	// notes.md も含まれることを確認
+	if !strings.Contains(body, "notes.md") {
+		t.Errorf("expected notes.md in dir-list entries, got:\n%s", body)
+	}
+}
+
+// TestE2E_DirWithoutReadme_ListParam_NoReadmeLink は README なしディレクトリへの ?list リクエストで
+// README リンクが HTML に含まれないことを検証する。
+func TestE2E_DirWithoutReadme_ListParam_NoReadmeLink(t *testing.T) {
+	docRoot := t.TempDir()
+	if err := os.WriteFile(filepath.Join(docRoot, "notes.md"), []byte("# Notes\n"), 0o644); err != nil {
+		t.Fatalf("WriteFile: %v", err)
+	}
+
+	port := freePort(t)
+	cfg := server.Config{DocRoot: docRoot, Port: port, NoWatch: true}
+	s := server.New(cfg)
+	go func() { _ = s.Start() }()
+	t.Cleanup(func() { _ = s.Shutdown() })
+	waitForServer(t, port)
+
+	resp, err := http.Get(fmt.Sprintf("http://localhost:%d/?list", port))
+	if err != nil {
+		t.Fatalf("GET /?list: %v", err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	body := readBody(t, resp)
+	if strings.Contains(body, "README を表示") {
+		t.Errorf("expected NO 'README を表示' link when no README exists, got:\n%s", body)
+	}
+}
+
+// TestE2E_DirWithReadme_ListParam_ShowsBreadcrumbs は ?list ページにブレッドクラムが
+// 正しく表示されることを検証する。
+func TestE2E_DirWithReadme_ListParam_ShowsBreadcrumbs(t *testing.T) {
+	docRoot := t.TempDir()
+	subDir := filepath.Join(docRoot, "docs")
+	if err := os.Mkdir(subDir, 0o755); err != nil {
+		t.Fatalf("Mkdir: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(subDir, "README.md"), []byte("# Docs README\n"), 0o644); err != nil {
+		t.Fatalf("WriteFile: %v", err)
+	}
+
+	port := freePort(t)
+	cfg := server.Config{DocRoot: docRoot, Port: port, NoWatch: true}
+	s := server.New(cfg)
+	go func() { _ = s.Start() }()
+	t.Cleanup(func() { _ = s.Shutdown() })
+	waitForServer(t, port)
+
+	resp, err := http.Get(fmt.Sprintf("http://localhost:%d/docs/?list", port))
+	if err != nil {
+		t.Fatalf("GET /docs/?list: %v", err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	body := readBody(t, resp)
+	if !strings.Contains(body, "Root") {
+		t.Errorf("expected 'Root' breadcrumb in ?list page, got:\n%s", body)
+	}
+	if !strings.Contains(body, "docs") {
+		t.Errorf("expected 'docs' breadcrumb in ?list page, got:\n%s", body)
+	}
+}
+
 // TestSSELiveReload_NoWatchModeNoSSEEvent は --no-watch モードで起動した場合に
 // ファイル変更後も SSE イベントが発行されないことを検証する。
 func TestSSELiveReload_NoWatchModeNoSSEEvent(t *testing.T) {
