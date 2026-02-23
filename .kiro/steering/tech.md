@@ -73,6 +73,8 @@ GOOS=linux GOARCH=amd64 go build -o bin/mdserve-linux-amd64 ./cmd/mdserve/
 - **SSEによるライブリロード** - WebSocketではなくSSE（`/events` エンドポイント）を採用。実装がシンプルでHTTPに収まる
 - **Chromaのクラス方式** - インラインスタイルではなくCSSクラスでシンタックスハイライトを適用。テーマ変更が容易
 - **シンボリックリンク解決** - パストラバーサル防止のためルーターでシンボリックリンクを完全解決して二重チェック
+- **グレースフルシャットダウン** - SIGINT/SIGTERM受信後、`watcher.Close → broker.Shutdown → http.Server.Shutdown(5s)` の順で5秒タイムアウト付きで安全終了。SSE接続中でもCtrl+Cで正常に停止できる
+- **パステルUIテーマ** - `kawaii.css` でかわいいパステル調デザインを提供。Google Fonts CDN経由でZen Maru Gothicフォントを読み込み。CSSはレイヤー構成（`github-markdown.css` → `highlight.css` → `kawaii.css`）で関心を分離
 
 ---
 _Document standards and patterns, not every dependency_
