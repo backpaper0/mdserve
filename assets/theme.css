@@ -47,3 +47,33 @@
     color: #d63384;
   }
 }
+
+/* ====== ダークモード カラーテーマ ====== */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bgColor-default:   #1e0d14;
+    --bgColor-muted:     #2d1522;
+    --fgColor-default:   #fde8ee;
+    --fgColor-accent:    #f48fb1;
+    --borderColor-default: #5c2d45;
+  }
+
+  .markdown-body h1,
+  .markdown-body h2,
+  .markdown-body h3 {
+    border-bottom-color: #5c2d45;
+  }
+
+  nav.breadcrumb {
+    color: #f3b8cc;
+  }
+
+  nav.breadcrumb a {
+    color: #f48fb1;
+  }
+
+  .dir-list-link a {
+    color: #f48fb1;
+  }
+}
