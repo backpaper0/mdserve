@@ -1,0 +1,282 @@
+/* kawaii.css - パステル調UIスタイル (Zen Maru Gothic + ピンク&ラベンダーパレット) */
+
+/* Google Fonts は page.html / dirlist.html の <link> で読み込む */
+
+/* ===== ボディ & 全体設定 ===== */
+body {
+  background-color: #fff5f8;
+  font-family: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', 'BIZ UDPGothic', sans-serif;
+  color: #4a3261;
+}
+
+/* ===== markdown-body CSS変数オーバーライド (ライトモード) ===== */
+.markdown-body {
+  --color-canvas-default: #fff5f8;
+  --color-canvas-subtle: #fdedf4;
+  --color-border-default: #f0c2d8;
+  --color-border-muted: #f5c2dc;
+  --color-neutral-muted: rgba(220, 160, 195, 0.15);
+  --color-accent-fg: #c2547e;
+  --color-accent-emphasis: #c2547e;
+  --color-fg-default: #4a3261;
+  --color-fg-muted: #9e86b5;
+  --color-fg-subtle: #9e86b5;
+  --color-prettylights-syntax-comment: #9e86b5;
+  --color-prettylights-syntax-constant: #5b8fa8;
+  --color-prettylights-syntax-entity: #8b5cba;
+  --color-prettylights-syntax-storage-modifier-import: #4a3261;
+  --color-prettylights-syntax-entity-tag: #5b8fa8;
+  --color-prettylights-syntax-keyword: #c2547e;
+  --color-prettylights-syntax-string: #6a5acd;
+  --color-prettylights-syntax-variable: #c07850;
+  --color-prettylights-syntax-brackethighlighter-unmatched: #c2547e;
+  --color-prettylights-syntax-invalid-illegal-text: #fff5f8;
+  --color-prettylights-syntax-invalid-illegal-bg: #c2547e;
+  --color-prettylights-syntax-carriage-return-text: #fff5f8;
+  --color-prettylights-syntax-carriage-return-bg: #c2547e;
+  --color-prettylights-syntax-string-regexp: #6a5acd;
+  --color-prettylights-syntax-markup-list: #c07850;
+  --color-prettylights-syntax-markup-heading: #4a3261;
+  --color-prettylights-syntax-markup-italic: #4a3261;
+  --color-prettylights-syntax-markup-bold: #4a3261;
+  --color-prettylights-syntax-markup-deleted-text: #c2547e;
+  --color-prettylights-syntax-markup-deleted-bg: #fdedf4;
+  --color-prettylights-syntax-markup-inserted-text: #8b5cba;
+  --color-prettylights-syntax-markup-inserted-bg: #f5eeff;
+  --color-prettylights-syntax-markup-changed-text: #c07850;
+  --color-prettylights-syntax-markup-changed-bg: #fff3e8;
+  --color-prettylights-syntax-markup-ignored-text: #9e86b5;
+  --color-prettylights-syntax-markup-ignored-bg: #fdedf4;
+  --color-prettylights-syntax-meta-diff-range: #8b5cba;
+  --color-prettylights-syntax-brackethighlighter-angle: #9e86b5;
+  --color-prettylights-syntax-sublimelinter-gutter-mark: #f0c2d8;
+  --color-prettylights-syntax-constant-other-reference-link: #6a5acd;
+}
+
+/* ===== markdown-body 追加スタイル ===== */
+.markdown-body {
+  background-color: transparent;
+  color: #4a3261;
+  font-family: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', 'BIZ UDPGothic', sans-serif;
+}
+
+.markdown-body a {
+  color: #c2547e;
+}
+
+.markdown-body a:hover {
+  color: #a03060;
+}
+
+.markdown-body h1,
+.markdown-body h2 {
+  border-bottom-color: #f5c2dc;
+}
+
+.markdown-body blockquote {
+  border-left-color: #f0a0c8;
+  color: #9e86b5;
+}
+
+.markdown-body hr {
+  background-color: #f0c2d8;
+}
+
+.markdown-body table tr {
+  background-color: #fff5f8;
+  border-top-color: #f0c2d8;
+}
+
+.markdown-body table tr:nth-child(2n) {
+  background-color: #fdedf4;
+}
+
+.markdown-body table th,
+.markdown-body table td {
+  border-color: #f0c2d8;
+}
+
+.markdown-body table th {
+  background-color: #fde8f3;
+}
+
+.markdown-body code,
+.markdown-body tt {
+  background-color: rgba(220, 160, 195, 0.15);
+  color: #8b5cba;
+}
+
+.markdown-body pre {
+  background-color: #fdedf4;
+  border: 1px solid #f0c2d8;
+}
+
+.markdown-body pre code {
+  background-color: transparent;
+}
+
+/* ===== パンくずナビ ===== */
+nav.breadcrumb {
+  margin-bottom: 1em;
+  font-size: 0.9em;
+  color: #9e86b5;
+  font-family: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', 'BIZ UDPGothic', sans-serif;
+}
+
+nav.breadcrumb a {
+  color: #c2547e;
+  text-decoration: none;
+}
+
+nav.breadcrumb a:hover {
+  color: #a03060;
+  text-decoration: underline;
+}
+
+/* ===== ディレクトリ一覧 ===== */
+.dir-list-link {
+  margin-bottom: 0.8em;
+  font-size: 0.9em;
+}
+
+.dir-list-link a {
+  color: #c2547e;
+  text-decoration: none;
+  padding: 0.2em 0.6em;
+  border: 1px solid #f0c2d8;
+  border-radius: 1em;
+  background-color: #fdedf4;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.dir-list-link a:hover {
+  background-color: #f5c2dc;
+  border-color: #e090b8;
+  color: #a03060;
+}
+
+/* ディレクトリリスト内の [dir] プレフィックス */
+.markdown-body li a {
+  color: #c2547e;
+}
+
+.markdown-body li a:hover {
+  color: #a03060;
+}
+
+/* [dir] テキストのスタイル */
+.markdown-body li a:has(> *:first-child) {
+  /* ディレクトリエントリのかわいいスタイル */
+}
+
+/* ===== ダークモード ===== */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1a1025;
+    color: #d4c0e8;
+  }
+
+  .markdown-body {
+    --color-canvas-default: #1a1025;
+    --color-canvas-subtle: #251535;
+    --color-border-default: #4a2860;
+    --color-border-muted: #3d2255;
+    --color-neutral-muted: rgba(160, 100, 180, 0.15);
+    --color-accent-fg: #e896b8;
+    --color-accent-emphasis: #e896b8;
+    --color-fg-default: #d4c0e8;
+    --color-fg-muted: #9e86b5;
+    --color-fg-subtle: #7a6090;
+    --color-prettylights-syntax-comment: #9e86b5;
+    --color-prettylights-syntax-constant: #82c0d8;
+    --color-prettylights-syntax-entity: #c090e8;
+    --color-prettylights-syntax-storage-modifier-import: #d4c0e8;
+    --color-prettylights-syntax-entity-tag: #82c0d8;
+    --color-prettylights-syntax-keyword: #e896b8;
+    --color-prettylights-syntax-string: #a090e0;
+    --color-prettylights-syntax-variable: #e0a870;
+    --color-prettylights-syntax-string-regexp: #a090e0;
+    --color-prettylights-syntax-markup-list: #e0a870;
+    --color-prettylights-syntax-markup-heading: #d4c0e8;
+  }
+
+  .markdown-body {
+    background-color: transparent;
+    color: #d4c0e8;
+  }
+
+  .markdown-body a {
+    color: #e896b8;
+  }
+
+  .markdown-body a:hover {
+    color: #f0b0cc;
+  }
+
+  .markdown-body h1,
+  .markdown-body h2 {
+    border-bottom-color: #4a2860;
+  }
+
+  .markdown-body blockquote {
+    border-left-color: #6a3880;
+    color: #9e86b5;
+  }
+
+  .markdown-body hr {
+    background-color: #4a2860;
+  }
+
+  .markdown-body table tr {
+    background-color: #1a1025;
+    border-top-color: #4a2860;
+  }
+
+  .markdown-body table tr:nth-child(2n) {
+    background-color: #251535;
+  }
+
+  .markdown-body table th,
+  .markdown-body table td {
+    border-color: #4a2860;
+  }
+
+  .markdown-body table th {
+    background-color: #2d1845;
+  }
+
+  .markdown-body code,
+  .markdown-body tt {
+    background-color: rgba(160, 100, 180, 0.2);
+    color: #c090e8;
+  }
+
+  .markdown-body pre {
+    background-color: #251535;
+    border: 1px solid #4a2860;
+  }
+
+  nav.breadcrumb {
+    color: #9e86b5;
+  }
+
+  nav.breadcrumb a {
+    color: #e896b8;
+  }
+
+  nav.breadcrumb a:hover {
+    color: #f0b0cc;
+  }
+
+  .dir-list-link a {
+    color: #e896b8;
+    border-color: #4a2860;
+    background-color: #251535;
+  }
+
+  .dir-list-link a:hover {
+    background-color: #3d2255;
+    border-color: #6a3880;
+    color: #f0b0cc;
+  }
+}
