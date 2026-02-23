@@ -1,0 +1,16 @@
+/* mdserve テーマCSS
+ * github-markdown.css のスタイルをカスケード上書きするカスタムテーマ。
+ * 必ず github-markdown.css の後に読み込むこと。
+ */
+
+/* ====== タイポグラフィ（ライト・ダーク共通） ====== */
+
+.markdown-body {
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+.markdown-body code,
+.markdown-body pre code {
+  font-size: 0.875em;
+}

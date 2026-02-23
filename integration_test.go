@@ -43,6 +43,51 @@ func waitForServer(t *testing.T, port int) {
 	t.Fatalf("server on port %d did not start within 3s", port)
 }
 
+// --- ui-theme Task 3.2: /assets/theme.css 配信統合テスト ---
+
+// TestE2E_ThemeCSS_Served は /assets/theme.css が HTTP 200 と text/css Content-Type で
+// 配信され、タイポグラフィ定義を含むことを検証する（Task 1.1 の受け入れテスト）。
+func TestE2E_ThemeCSS_Served(t *testing.T) {
+	port := freePort(t)
+	cfg := server.Config{
+		DocRoot:  t.TempDir(),
+		Port:     port,
+		NoWatch:  true,
+		AssetsFS: mdserve.Assets,
+	}
+	s := server.New(cfg)
+	go func() { _ = s.Start() }()
+	t.Cleanup(func() { _ = s.Shutdown() })
+	waitForServer(t, port)
+
+	resp, err := http.Get(fmt.Sprintf("http://localhost:%d/assets/theme.css", port))
+	if err != nil {
+		t.Fatalf("GET /assets/theme.css: %v", err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	if resp.StatusCode != http.StatusOK {
+		t.Errorf("expected 200, got %d", resp.StatusCode)
+	}
+	ct := resp.Header.Get("Content-Type")
+	if !strings.HasPrefix(ct, "text/css") {
+		t.Errorf("Content-Type = %q, want text/css", ct)
+	}
+
+	body := readBody(t, resp)
+	checks := []string{
+		"18px",
+		"1.7",
+		"0.875em",
+		"markdown-body",
+	}
+	for _, want := range checks {
+		if !strings.Contains(body, want) {
+			t.Errorf("theme.css: expected %q in content, got:\n%s", want, body)
+		}
+	}
+}
+
 // --- Task 7.2: HTTPサーバーE2Eテスト（埋め込みアセット）---
 
 // TestE2E_EmbeddedAssetsServed は実際の埋め込みアセット（go:embed）が
