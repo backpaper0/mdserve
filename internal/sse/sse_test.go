@@ -115,6 +115,31 @@ func TestBroker_ShutdownWithNoClients(t *testing.T) {
 	b.Shutdown()
 }
 
+func TestBroker_ShutdownPreventsNewRegistrations(t *testing.T) {
+	b := sse.New()
+	b.Shutdown()
+
+	ch := b.Register()
+
+	select {
+	case _, ok := <-ch:
+		if ok {
+			t.Error("Register() after Shutdown() should return a closed channel")
+		}
+		// ok==false は期待通り
+	case <-time.After(100 * time.Millisecond):
+		t.Error("Register() after Shutdown() returned a channel that was never closed")
+	}
+}
+
+func TestBroker_UnregisterAfterShutdownIsNoop(t *testing.T) {
+	b := sse.New()
+	ch := b.Register()
+	b.Shutdown()
+	// Shutdown()後にUnregister()を呼んでもパニックしないこと
+	b.Unregister(ch)
+}
+
 func TestBroker_ConcurrentRegisterUnregisterBroadcast(t *testing.T) {
 	b := sse.New()
 	var wg sync.WaitGroup

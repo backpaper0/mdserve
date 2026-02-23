@@ -32,10 +32,15 @@ func New() Broker {
 }
 
 func (b *broker) Register() <-chan struct{} {
-	ch := make(chan struct{}, 1)
 	b.mu.Lock()
+	defer b.mu.Unlock()
+	if b.shutdown {
+		ch := make(chan struct{}, 1)
+		close(ch)
+		return ch
+	}
+	ch := make(chan struct{}, 1)
 	b.clients[ch] = struct{}{}
-	b.mu.Unlock()
 	return ch
 }
 
