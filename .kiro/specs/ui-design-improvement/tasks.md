@@ -35,7 +35,7 @@
   - `body` の padding・max-width は `theme.css` に移管するか、インラインのまま維持するか判断する（`github-markdown.css` を非変更にするという制約のもとで）
   - _Requirements: 1.1, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 3.1, 3.3_
 
-- [ ] 2.2 (P) ディレクトリ一覧テンプレートにテーマ参照を追加する
+- [x] 2.2 (P) ディレクトリ一覧テンプレートにテーマ参照を追加する
   - `dirlist.html` の `github-markdown.css` の直後に `<link rel="stylesheet" href="/assets/theme.css">` を追加する
   - `<link>` の順序が `github-markdown.css` → `theme.css` であることを確認する（`highlight.css` は不要）
   - テンプレート内のインライン `<style>` からパンくずスタイルを削除し、`theme.css` 側でカバーする

@@ -379,6 +379,33 @@ func TestRenderDirList_IndexURL_Empty_HidesLink(t *testing.T) {
 
 // --- ui-theme Task 3.1: テンプレートの theme.css 参照テスト ---
 
+// TestRenderDirList_ContainsThemeCSS は dirlist.html の出力に theme.css の link タグが
+// 含まれ、github-markdown.css より後に配置されることを検証する（Task 2.2 の受け入れテスト）。
+func TestRenderDirList_ContainsThemeCSS(t *testing.T) {
+	engine := tmpl.New()
+	data := tmpl.DirListData{Title: "Test"}
+
+	got, err := engine.RenderDirList(data)
+	if err != nil {
+		t.Fatalf("RenderDirList error: %v", err)
+	}
+
+	html := string(got)
+	if !strings.Contains(html, "/assets/theme.css") {
+		t.Errorf("expected /assets/theme.css link in dirlist.html output, got:\n%s", html)
+	}
+
+	// github-markdown.css より後に theme.css が現れることを確認する
+	githubPos := strings.Index(html, "/assets/github-markdown.css")
+	themePos := strings.Index(html, "/assets/theme.css")
+	if githubPos == -1 || themePos == -1 {
+		t.Fatalf("github-markdown.css or theme.css not found in output")
+	}
+	if themePos <= githubPos {
+		t.Errorf("theme.css must appear after github-markdown.css in dirlist.html")
+	}
+}
+
 // TestRenderPage_ContainsThemeCSS は page.html の出力に theme.css の link タグが
 // 含まれ、highlight.css より後に配置されることを検証する（Task 2.1 の受け入れテスト）。
 func TestRenderPage_ContainsThemeCSS(t *testing.T) {
