@@ -28,7 +28,7 @@
   - _Requirements: 2.1, 2.2, 2.4, 2.6, 3.4_
 
 - [ ] 2. HTMLテンプレートを更新してテーマCSSを読み込む
-- [ ] 2.1 (P) Markdownページテンプレートにテーマ参照を追加する
+- [x] 2.1 (P) Markdownページテンプレートにテーマ参照を追加する
   - `page.html` の `highlight.css` の直後に `<link rel="stylesheet" href="/assets/theme.css">` を追加する
   - `<link>` の順序が `github-markdown.css` → `highlight.css` → `theme.css` であることを確認する
   - テンプレート内のインライン `<style>` からパンくず（`nav.breadcrumb`）スタイルを削除し、`theme.css` 側でカバーする

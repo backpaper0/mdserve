@@ -376,3 +376,35 @@ func TestRenderDirList_IndexURL_Empty_HidesLink(t *testing.T) {
 		t.Errorf("expected NO readme link when IndexURL is empty, got:\n%s", html)
 	}
 }
+
+// --- ui-theme Task 3.1: テンプレートの theme.css 参照テスト ---
+
+// TestRenderPage_ContainsThemeCSS は page.html の出力に theme.css の link タグが
+// 含まれ、highlight.css より後に配置されることを検証する（Task 2.1 の受け入れテスト）。
+func TestRenderPage_ContainsThemeCSS(t *testing.T) {
+	engine := tmpl.New()
+	data := tmpl.PageData{
+		Title:   "Test",
+		Content: template.HTML("<p>body</p>"),
+	}
+
+	got, err := engine.RenderPage(data)
+	if err != nil {
+		t.Fatalf("RenderPage error: %v", err)
+	}
+
+	html := string(got)
+	if !strings.Contains(html, "/assets/theme.css") {
+		t.Errorf("expected /assets/theme.css link in page.html output, got:\n%s", html)
+	}
+
+	// highlight.css より後に theme.css が現れることを確認する
+	highlightPos := strings.Index(html, "/assets/highlight.css")
+	themePos := strings.Index(html, "/assets/theme.css")
+	if highlightPos == -1 || themePos == -1 {
+		t.Fatalf("highlight.css or theme.css not found in output")
+	}
+	if themePos <= highlightPos {
+		t.Errorf("theme.css must appear after highlight.css in page.html")
+	}
+}
