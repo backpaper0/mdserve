@@ -42,13 +42,13 @@
   - _Requirements: 1.3, 2.5, 3.1, 3.2, 3.3_
 
 - [ ] 3. テストを追加・更新する
-- [ ] 3.1 (P) テンプレートの出力に `theme.css` の参照が含まれることをテストする
+- [x] 3.1 (P) テンプレートの出力に `theme.css` の参照が含まれることをテストする
   - `tmpl_test.go` に `page.html` の出力に `theme.css` の `<link>` タグが含まれることを検証するテストを追加する
   - `dirlist.html` の出力にも同様のテストを追加する
   - `<link>` の順序（`github-markdown.css` より後）が正しいことを確認する
   - _Requirements: 3.1, 3.3_
 
-- [ ] 3.2 (P) `/assets/theme.css` のアセット配信を統合テストで検証する
+- [x] 3.2 (P) `/assets/theme.css` のアセット配信を統合テストで検証する
   - `integration_test.go` に `/assets/theme.css` への GET リクエストが HTTP 200 を返すことを確認するテストを追加する
   - レスポンスのContent-Typeが `text/css` であることを確認する
   - _Requirements: 3.3_
