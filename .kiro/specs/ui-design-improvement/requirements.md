@@ -1,11 +1,47 @@
-# Requirements Document
+# 要件ドキュメント
 
-## Project Description (Input)
+## プロジェクト説明（入力）
+
 UIデザインの改善
 
 - もう少し文字を大きくして読みやすくしてほしい。
 - 白黒でそっけないので、色を付けてかわいくしてほしい。
   参考にしてほしいWebページ: https://urgm.jp/private_screening_lycoris_recoil.html
 
-## Requirements
-<!-- Will be generated in /kiro:spec-requirements phase -->
+## 要件
+
+### 要件 1: フォントサイズの拡大
+
+**目的:** ローカルでMarkdownを閲覧するユーザーとして、より大きな文字でコンテンツを読みたい。そうすることで、長文のドキュメントを快適に読み続けられる。
+
+#### 受け入れ基準
+
+1. The mdserve shall 本文テキストのベースフォントサイズを現在の `1rem`（16px）より大きい値（18px相当以上）で表示する。
+2. When Markdownページが表示される, the mdserve shall 見出し（h1〜h6）のフォントサイズもベースサイズに比例して適切に拡大する。
+3. The mdserve shall ディレクトリ一覧ページのファイル名・リンクテキストも同様に拡大されたフォントサイズで表示する。
+4. The mdserve shall 行間（line-height）をフォントサイズ拡大に合わせて適切に設定し、読みやすさを維持する。
+5. The mdserve shall コードブロック・インラインコードのフォントサイズは本文との比率を維持しながら調整する。
+
+### 要件 2: カラーテーマの適用
+
+**目的:** ローカルでMarkdownを閲覧するユーザーとして、白黒ではなく色味のある画面でコンテンツを閲覧したい。そうすることで、閲覧体験が楽しくなり、長時間の使用でも疲れにくくなる。
+
+#### 受け入れ基準
+
+1. The mdserve shall ページ背景色にパステル系または柔らかな色調（白ではなく有彩色）を適用する。
+2. The mdserve shall リンクのテキスト色をテーマに合った有彩色（青以外の色も含む）で表示する。
+3. When リンクにホバーする, the mdserve shall 視覚的なフィードバック（色変化・下線など）を提供する。
+4. The mdserve shall 見出し（h1〜h3）にカラーテーマに沿った色またはボーダーアクセントを適用する。
+5. The mdserve shall ディレクトリ一覧ページとMarkdownページで統一されたカラーテーマを使用する。
+6. The mdserve shall パンくずナビゲーション（breadcrumb）にもカラーテーマを適用する。
+
+### 要件 3: 全体的な視覚的統一感
+
+**目的:** ローカルでMarkdownを閲覧するユーザーとして、ページ全体がひとつのデザインコンセプトでまとまっているように見てほしい。そうすることで、ツールとしての完成度が上がり、日常的に使いたくなる。
+
+#### 受け入れ基準
+
+1. The mdserve shall Markdownページ（`page.html`）とディレクトリ一覧ページ（`dirlist.html`）の両方で同一のカラー変数・スタイル定義を共有する。
+2. The mdserve shall 「ファイル一覧を表示」「README を表示」のナビゲーションリンクをカラーテーマに合わせてスタイリングする。
+3. The mdserve shall ページ全体のデザインが既存のgithub-markdown.cssを上書き・拡張する形で実現され、外部CSSファイルへの依存を変更しない。
+4. If ブラウザがダークモード（`prefers-color-scheme: dark`）を要求する, the mdserve shall ダークモード時にも同様にカラーテーマを適用し、可読性を維持する。
