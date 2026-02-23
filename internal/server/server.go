@@ -110,9 +110,13 @@ func (s *Server) Start() error {
 
 // Shutdown gracefully stops the HTTP server with up to 5 seconds for
 // active connections to complete.
+// Sequence: watcher.Close → broker.Shutdown → http.Server.Shutdown(5s)
 func (s *Server) Shutdown() error {
 	if s.watcher != nil {
 		_ = s.watcher.Close()
+	}
+	if s.broker != nil {
+		s.broker.Shutdown()
 	}
 	if s.httpSrv == nil {
 		return nil

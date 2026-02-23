@@ -130,6 +130,48 @@ func TestSSEHandler_SendsReloadEventOnBroadcast(t *testing.T) {
 	}
 }
 
+// --- Task 3.2: SSE接続中のシャットダウン統合テスト ---
+
+func TestServer_ShutdownWithActiveSSEConnection(t *testing.T) {
+	port := freePort(t)
+	cfg := server.Config{DocRoot: t.TempDir(), Port: port, NoWatch: true}
+	s := server.New(cfg)
+
+	startDone := make(chan error, 1)
+	go func() { startDone <- s.Start() }()
+	waitForServer(t, port)
+
+	// SSE接続を確立する
+	resp, err := http.Get(fmt.Sprintf("http://localhost:%d/events", port))
+	if err != nil {
+		t.Fatalf("GET /events: %v", err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	// Shutdown()がタイムアウトなし（3秒以内）かつエラーなしで完了すること
+	shutdownDone := make(chan error, 1)
+	go func() { shutdownDone <- s.Shutdown() }()
+
+	select {
+	case err := <-shutdownDone:
+		if err != nil {
+			t.Fatalf("Shutdown() returned error: %v", err)
+		}
+	case <-time.After(3 * time.Second):
+		t.Fatal("Shutdown() did not complete within 3s (SSE connection was not closed)")
+	}
+
+	// Start() もエラーなしで終了すること
+	select {
+	case err := <-startDone:
+		if err != nil {
+			t.Fatalf("Start() returned error: %v", err)
+		}
+	case <-time.After(1 * time.Second):
+		t.Fatal("Start() did not return after Shutdown()")
+	}
+}
+
 // --- SSEがサーバーに統合されていることの確認 ---
 
 func TestServer_SSEEndpointAvailable(t *testing.T) {
