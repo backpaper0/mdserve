@@ -4,7 +4,7 @@
 
 - [ ] 1. SSEブローカーにシャットダウン機能を追加する
 
-- [ ] 1.1 `Broker` インターフェースに `Shutdown()` を追加し、`broker` 構造体に実装する
+- [x] 1.1 `Broker` インターフェースに `Shutdown()` を追加し、`broker` 構造体に実装する
   - `sse.Broker` インターフェースに `Shutdown()` メソッドを追加する
   - `broker` 構造体に `shutdown bool` フィールドを追加する
   - `broker.Shutdown()` を実装する: `shutdown = true` をセットし、全クライアントチャネルをクローズしてからマップをクリアする

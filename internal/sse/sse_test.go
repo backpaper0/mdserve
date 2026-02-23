@@ -88,6 +88,33 @@ func TestBroker_BroadcastIsNonBlocking(t *testing.T) {
 	}
 }
 
+// --- Task 1.1: Broker.Shutdown() ---
+
+func TestBroker_ShutdownClosesAllChannels(t *testing.T) {
+	b := sse.New()
+	ch1 := b.Register()
+	ch2 := b.Register()
+
+	b.Shutdown()
+
+	for i, ch := range []<-chan struct{}{ch1, ch2} {
+		select {
+		case _, ok := <-ch:
+			if ok {
+				t.Errorf("client %d channel not closed after Shutdown()", i+1)
+			}
+		case <-time.After(100 * time.Millisecond):
+			t.Errorf("client %d channel not closed after Shutdown() (timeout)", i+1)
+		}
+	}
+}
+
+func TestBroker_ShutdownWithNoClients(t *testing.T) {
+	b := sse.New()
+	// クライアントなしでShutdown()を呼んでもパニックしないこと
+	b.Shutdown()
+}
+
 func TestBroker_ConcurrentRegisterUnregisterBroadcast(t *testing.T) {
 	b := sse.New()
 	var wg sync.WaitGroup

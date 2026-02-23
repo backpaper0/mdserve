@@ -214,6 +214,7 @@ type recordingBroker struct {
 func (b *recordingBroker) Register() <-chan struct{}    { return make(chan struct{}) }
 func (b *recordingBroker) Unregister(_ <-chan struct{}) {}
 func (b *recordingBroker) Broadcast()                   { b.ch <- struct{}{} }
+func (b *recordingBroker) Shutdown()                    {}
 
 // drainChannel はチャンネルを空にする。
 func drainChannel(ch chan struct{}) {
