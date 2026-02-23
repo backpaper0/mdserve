@@ -88,6 +88,42 @@ func TestE2E_ThemeCSS_Served(t *testing.T) {
 	}
 }
 
+// TestE2E_ThemeCSS_LightMode は theme.css にライトモードのカラー定義が含まれることを検証する
+// （Task 1.2 の受け入れテスト）。
+func TestE2E_ThemeCSS_LightMode(t *testing.T) {
+	port := freePort(t)
+	cfg := server.Config{
+		DocRoot:  t.TempDir(),
+		Port:     port,
+		NoWatch:  true,
+		AssetsFS: mdserve.Assets,
+	}
+	s := server.New(cfg)
+	go func() { _ = s.Start() }()
+	t.Cleanup(func() { _ = s.Shutdown() })
+	waitForServer(t, port)
+
+	resp, err := http.Get(fmt.Sprintf("http://localhost:%d/assets/theme.css", port))
+	if err != nil {
+		t.Fatalf("GET /assets/theme.css: %v", err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	body := readBody(t, resp)
+	checks := []string{
+		"prefers-color-scheme: light",
+		"#fff5f7", // 背景色（パステルピンク）
+		"#d63384", // アクセント・リンク色（ピンク）
+		"#f3b8cc", // 見出しボーダー色
+		"#9c4068", // breadcrumb テキスト色
+	}
+	for _, want := range checks {
+		if !strings.Contains(body, want) {
+			t.Errorf("theme.css ライトモード: expected %q in content", want)
+		}
+	}
+}
+
 // --- Task 7.2: HTTPサーバーE2Eテスト（埋め込みアセット）---
 
 // TestE2E_EmbeddedAssetsServed は実際の埋め込みアセット（go:embed）が
