@@ -1,4 +1,4 @@
-# md2html - Markdown HTML Server
+# mdserve - Markdown HTML Server
 
 Mermaid.jsの図を含むMarkdownファイルをHTMLに変換してブラウザで閲覧できるローカルWebサーバーアプリケーションです。シングルバイナリとして配布され、インストール不要で即座にMarkdownディレクトリをWebサイト化できます。
 
