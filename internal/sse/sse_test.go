@@ -88,6 +88,58 @@ func TestBroker_BroadcastIsNonBlocking(t *testing.T) {
 	}
 }
 
+// --- Task 1.1: Broker.Shutdown() ---
+
+func TestBroker_ShutdownClosesAllChannels(t *testing.T) {
+	b := sse.New()
+	ch1 := b.Register()
+	ch2 := b.Register()
+
+	b.Shutdown()
+
+	for i, ch := range []<-chan struct{}{ch1, ch2} {
+		select {
+		case _, ok := <-ch:
+			if ok {
+				t.Errorf("client %d channel not closed after Shutdown()", i+1)
+			}
+		case <-time.After(100 * time.Millisecond):
+			t.Errorf("client %d channel not closed after Shutdown() (timeout)", i+1)
+		}
+	}
+}
+
+func TestBroker_ShutdownWithNoClients(t *testing.T) {
+	b := sse.New()
+	// クライアントなしでShutdown()を呼んでもパニックしないこと
+	b.Shutdown()
+}
+
+func TestBroker_ShutdownPreventsNewRegistrations(t *testing.T) {
+	b := sse.New()
+	b.Shutdown()
+
+	ch := b.Register()
+
+	select {
+	case _, ok := <-ch:
+		if ok {
+			t.Error("Register() after Shutdown() should return a closed channel")
+		}
+		// ok==false は期待通り
+	case <-time.After(100 * time.Millisecond):
+		t.Error("Register() after Shutdown() returned a channel that was never closed")
+	}
+}
+
+func TestBroker_UnregisterAfterShutdownIsNoop(t *testing.T) {
+	b := sse.New()
+	ch := b.Register()
+	b.Shutdown()
+	// Shutdown()後にUnregister()を呼んでもパニックしないこと
+	b.Unregister(ch)
+}
+
 func TestBroker_ConcurrentRegisterUnregisterBroadcast(t *testing.T) {
 	b := sse.New()
 	var wg sync.WaitGroup
